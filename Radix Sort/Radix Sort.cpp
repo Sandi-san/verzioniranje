@@ -146,12 +146,22 @@ void RadixSort(vector<int> A) {
 
 	vector<unsigned char> D; //polje bitov
 	for (int k = 0; k < 8; k++) {
+		D.clear();
 		for (int i = 0; i < A.size(); i++) {
-			D.clear();
-			cout << ((A.at(i) >> k) & 1) << "\n";
-			//bool bit = (A.at(i) >> k) & 1;
-			//D.push_back(bit);
+			//cout << ((A.at(i) >> k) & 1) << "\n";
+			bool bit = ((A.at(i) >> k) & 1);
+			D.push_back(bit);
 		}
+
+		vector<int> D_copy(D.begin(), D.end());					//vector<unsigned char> pretovori v vector<int>
+		D_copy = CountingSort(D_copy);							//sortiraj D
+		vector<unsigned char> D(D_copy.begin(), D_copy.end());	//vector<int> pretvori v vector<unsigned char>
+		
+		for (int i = 0; i < D.size(); i++)
+		{
+			//cout << int(D.at(i)) << "\n";
+		}
+		return;
 	}
 
 }
