@@ -2,19 +2,64 @@
 //
 
 #include <iostream>
+#include <vector>
+#include <fstream>
 
-int main()
-{
-    std::cout << "Hello World!\n";
+using namespace std;
+
+vector<int> ReadFromFile(char* file) {
+	vector<int> A; //main polje
+	int stevilo; //stevilo iz datoteke
+	//cout << "File: " << file << "\n";
+	ifstream input(file);
+	if (!input.is_open()) //datoteko mozno odpreti
+	{
+		cout << "ERROR: Cannot open file!\n";
+		return vector<int>();
+	}
+	cout << "Reading file...\n";
+	//beri iz datoteke
+	while (!input.eof())
+	{
+		input >> stevilo;
+		if (!input) //prazen
+			break;
+		A.push_back(stevilo);
+	}
+	cout << "File read successfully!\n";
+	return A;
 }
 
-// Run program: Ctrl + F5 or Debug > Start Without Debugging menu
-// Debug program: F5 or Debug > Start Debugging menu
+void SaveToFile(vector<int> B) {
+	const char* file = "out.txt"; //ime izhodne datoteke
+	ofstream output(file);
+	if (!output.is_open()) //datoteko mozno odpreti
+	{
+		cout << "ERROR: Cannot open file!\n";
+		return;
+	}
+	cout << "Saving to file...\n";
+	//zapisi v datoteko
+	for (int i = 0; i < B.size(); i++)
+	{
+		output << B.at(i) << ' '; //zapisi v datoteko (razdeli z presledki)
+	}
+	output.close();
+	cout << "File saved successfully!\n";
+}
 
-// Tips for Getting Started: 
-//   1. Use the Solution Explorer window to add/manage files
-//   2. Use the Team Explorer window to connect to source control
-//   3. Use the Output window to see build output and other messages
-//   4. Use the Error List window to view errors
-//   5. Go to Project > Add New Item to create new code files, or Project > Add Existing Item to add existing code files to the project
-//   6. In the future, to open this project again, go to File > Open > Project and select the .sln file
+int main(int argc, char* argv[])
+{
+	//argv[1]=pot vhodne datoteke
+	//vnos command-line argumentov v: 
+	//	Solution Explorer -> desni-klik na Radix Sort -> Properties -> Debugging -> Command Arguments
+
+	if (argc <= 1) {
+		cout << "Invalid number of input arguments! Requires at least one!\n";
+	}
+	else {
+		vector<int> A = ReadFromFile(argv[1]);
+		cout << "OK";
+	}
+	return 0;
+}
