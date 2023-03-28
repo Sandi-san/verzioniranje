@@ -141,6 +141,21 @@ vector<int> CountingSort(vector<int> A) {
 	return B;
 }
 
+//vector<unsigned char> RadixSort(vector<int> A) {
+void RadixSort(vector<int> A) {
+
+	vector<unsigned char> D; //polje bitov
+	for (int k = 0; k < 8; k++) {
+		for (int i = 0; i < A.size(); i++) {
+			D.clear();
+			cout << ((A.at(i) >> k) & 1) << "\n";
+			//bool bit = (A.at(i) >> k) & 1;
+			//D.push_back(bit);
+		}
+	}
+
+}
+
 int main(int argc, char* argv[])
 {
 	//argv[1]=pot vhodne datoteke
@@ -151,8 +166,7 @@ int main(int argc, char* argv[])
 		cout << "Invalid number of input arguments! Requires at least one!\n";
 	}
 	else {
-		vector<int> A = ReadFromFile(argv[1]);
-		A = CountingSort(A);
+		RadixSort(ReadFromFile(argv[1]));
 		cout << "OK";
 	}
 	return 0;
