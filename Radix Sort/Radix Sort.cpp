@@ -48,6 +48,99 @@ void SaveToFile(vector<int> B) {
 	cout << "File saved successfully!\n";
 }
 
+vector<int> CountingSort(vector<int> A) {
+	cout << "Running Counting sort...\n";
+	vector<int> C; //pomozno polje
+
+	cout << "Getting minimum and maximum intervals...\n";
+	//pridobi interval min in max stevila v polju
+	int min = INT_MAX;
+	int max = 0;
+	for (int i = 0; i < A.size(); i++)
+	{
+		if (A.at(i) < min)
+			min = A.at(i);
+		if (A.at(i) > max)
+			max = A.at(i);
+	}
+	cout << "Intervals counted!\n";
+
+	cout << "Removing negative numbers...\n";
+	//odstrani negativna stevila (pristej min vrednost)
+	int neg = min * (-1);
+	for (int i = 0; i < A.size(); i++)
+	{
+		A.at(i) += neg;
+	}
+	cout << "Negative numbers removed!\n";
+
+	cout << "Creating array C...\n";
+	int sizeC = max + 1 + neg; //velikost C je najvecja vrednost A+1 (upostevaj nove vrednosti (neg))
+	//inicializiraj vseh elementov C na 0
+	for (int i = 0; i < sizeC; i++)
+	{
+		C.push_back(0);
+	}
+	cout << "C array successfully created!\n";
+
+	cout << "Counting C array variables...\n";
+	//stej C
+	//za vsako vrednost A[i] povecaj C z C[A[i]]=C[A[i]]+1;
+	for (int i = 0; i < A.size(); i++)
+	{
+		//C.at(A.at(i)) = C.at(i) + 1;
+		C.at(A.at(i))++;
+	}
+	cout << "C array variables counted successfully!\n";
+	//do tukaj tudi Roman sort
+
+	cout << "Counting sum of variables in C array...\n";
+	//sestevaj vrednosti C (inkrementalno, narascajoce)
+	//sestej vrednosti polja C kot C[i]=C[i]+C[i-1] za i>0 (vred v C vecja od 0)
+	for (int i = 0; i < C.size(); i++)
+	{
+		if (C.at(i) > 0)
+		{
+			if (i != 0)
+				C.at(i) += C.at(i - 1);
+		}
+		else
+			C.at(i) = C.at(i - 1);
+	}
+	cout << "Sum of variables in C array successfully counted!\n";
+
+	cout << "Creating B array...\n";
+	//ustvari polje B, velikosti A
+	vector<int> B;
+	for (int i = 0; i < A.size(); i++)
+	{
+		B.push_back(0);
+	}
+	cout << "B array successfully created!\n";
+
+	cout << "Counting variables from B array...\n";
+	//za vsako vrednost A[i] (OBRATNI VRSTNI RED) zapisi izhod v B kot B[C[A[i]]-1]=A[i]
+	//in dekrementiraj C[A[i]]=C[A[i]]-1
+	for (int i = A.size() - 1; i >= 0; i--)
+	{
+		B.at(C.at(A.at(i)) - 1) = A.at(i);
+		C.at(A.at(i))--;
+	}
+	cout << "B array variables successfully counted!\n";
+
+	//od tu dalje vsebuje tudi Roman sort
+	cout << "Converting to previous interval...\n";
+	//pretvori v obratni interval
+	for (int i = 0; i < B.size(); i++)
+	{
+		B.at(i) -= neg;
+	}
+	cout << "B array successfully converted to original interval!\n";
+
+	cout << "Counting Sort successfully completed!\n";
+	return B;
+}
+
 int main(int argc, char* argv[])
 {
 	//argv[1]=pot vhodne datoteke
@@ -59,6 +152,7 @@ int main(int argc, char* argv[])
 	}
 	else {
 		vector<int> A = ReadFromFile(argv[1]);
+		A = CountingSort(A);
 		cout << "OK";
 	}
 	return 0;
