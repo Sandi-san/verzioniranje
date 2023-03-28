@@ -170,13 +170,21 @@ vector<int> CountingSort(vector<int> A, int k) {
 	for (int i = A.size() - 1; i >= 0; i--) {
 		//bool bit = (A.at(i) >> k & 1);
 		bool bit = A.at(i);
-		if (i == 32)
-			cout << "";
+
 		B.at(--C.at(bit)) = A.at(i);
 	}
 
 	std::swap(A, B);
 	return A;
+}
+
+//sortiranje arrayev koncano?; A[i]>>k == D[i]
+bool arraySortFinished(vector<int> A, vector<unsigned char> D, int k) {
+	for (int i = 0; i < A.size(); i++) {
+		if (((A.at(i) >> k) & 1) != (int(D.at(i)) == 1))
+			return false;
+	}
+	return true;
 }
 
 //vector<unsigned char> RadixSort(vector<int> A) {
@@ -194,7 +202,7 @@ vector<int> RadixSort(vector<int> A) {
 
 		
 		vector<int> D_copy(D.begin(), D.end());					//vector<unsigned char> pretovori v vector<int>
-		D_copy = CountingSort(D_copy,k);							//sortiraj D
+		D_copy = CountingSort(D_copy,k);						//sortiraj D
 		vector<unsigned char> D(D_copy.begin(), D_copy.end());	//vector<int> pretvori v vector<unsigned char>
 		
 		//Glede na indekse sortiranih bitov popravimo vrstni red števil v A
@@ -204,43 +212,67 @@ vector<int> RadixSort(vector<int> A) {
 			cout << "debug";
 		}
 
-		
-		for (int i = 0; i < A.size(); i++)
+		bool increment = true;
+		for (int i = 0; i < A.size(); )
 		{
-			if (((A.at(i) >> k) & 1) == 1 && ((int(D.at(i)) != 1))) {
+			if (((A.at(i) >> k) & 1) == 1) {
 				for (int j = 0; j < D.size(); j++) {
-					if ((int(D.at(j)) == 1)) {
-						int temp = A.at(i);
-						A.erase(A.begin() + i); //remove at i
-						A.push_back(temp);
-						//A.insert(A.begin() + j, temp);	//add at j
-						break;
+					if((int(D.at(j)) == 1) && i!=j) {
+						if (A.at(i) != A.at(j)) {
+							int temp = A.at(i);
+							A.erase(A.begin() + i); //remove at i
+							A.push_back(temp);
+							//A.insert(A.begin() + j, temp);	//add at j
+							increment = false;
+							break;
 
-						//zajebe na k=3, pri 14
+							//PROBLEM: k=3, pri 14
+							//sortira 12, ne pa 14
+						}
 					}
 				}
+			/*
+			else {
+				for (int j = 0; j < D.size(); j++) {
+					if ((int(D.at(j)) == 0) && i!=j) {
+						if (A.at(i) != A.at(j)) {
+							int temp = A.at(i);
+							A.erase(A.begin() + i); //remove at i
+							A.push_back(temp);
+							//A.insert(A.begin() + j, temp);	//add at j
 
-				//A.erase(A.begin() + i);
-				//A.insert(A.begin() + j, temp);
+							break;
+						}
+					}
+				}
+				*/
 			}
+			if (arraySortFinished(A, D, k))
+				break;
+			//if (increment) {
+				i++;
+			//}
+			increment = true;
 		}
 		
 		/*
 		for (int i = 0; i < A.size(); i++)
 		{
-			for (int j = 0; j < D.size(); j++) {
-				//cout << int(D.at(i)) << "\n";
-				bool currentD = D.at(j);
-				//if (((A.at(i) >> k) & 1) == 1 && (int(D.at(j))==1) 
-				if (((A.at(i) >> k) & 1) == 1 && (int(D.at(j))==1) 
-					&& (i!=j)) {
-					int temp = A.at(j);
-					A.erase(A.begin()+j);
-					//A.push_back(temp);
-					A.insert(A.begin() + i, temp);
-					//A.at(i) = A.at(j);
-					//A.at(j) = temp;
+			if (((A.at(i) >> k) & 1) == 1) {
+				//if (((A.at(i) >> k) & 1) == 1 && ((int(D.at(i)) != 1))) {
+				for (int j = 0; j < D.size(); j++) {
+					if ((int(D.at(j)) == 1) && i != j) {
+						int temp = A.at(i);
+						A.erase(A.begin() + i); //remove at i
+						A.push_back(temp);
+						//A.insert(A.begin() + j, temp);	//add at j
+						
+						//break;
+						//zajebe na k=3, pri 14
+					}
 				}
+				//A.erase(A.begin() + i);
+				//A.insert(A.begin() + j, temp);
 			}
 		}
 		*/
