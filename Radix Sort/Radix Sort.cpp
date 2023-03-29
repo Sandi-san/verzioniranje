@@ -45,7 +45,8 @@ void SaveToFile(vector<int> B) {
 	cout << "File saved successfully!\n";
 }
 
-vector<int> initVector(vector<int> A, int size) {
+//inicializiraj vektor A z 0, v dolzini size
+vector<unsigned char> initVector(vector<unsigned char> A, int size) {
 	A.clear();
 	for (int i = 0; i < size; i++) {
 		A.push_back(0);
@@ -54,14 +55,18 @@ vector<int> initVector(vector<int> A, int size) {
 }
 
 //vector<unsigned char> RadixSort(vector<int> A) {
-vector<int> RadixSort(vector<int> A) {
+vector<int> RadixSort(vector<int> Ax) {
+	//pretvori vector<int> v vector<unsigned char>
+	vector<int> Ax_copy(Ax.begin(), Ax.end());				//vector<unsigned char> -> vector<int>
+	vector<unsigned char> A(Ax_copy.begin(), Ax_copy.end());	//vector<int> -> vector<unsigned char>
+
 	cout << "\nRunning Radix sort...\n";
 
 	cout << "Creating and initializing C vector...\n";
 	vector<unsigned int> C; //prefixi
 	C.push_back(0); C.push_back(0); //inicializiraj
 
-	vector<int> B;
+	vector<unsigned char> B;
 
 	for (int k = 0; k < 8; k++) {
 		cout << "\nSorting bit "<<k+1<<":\n";
@@ -85,7 +90,7 @@ vector<int> RadixSort(vector<int> A) {
 		cout << "Sorting vector B based on values of C...\n";
 		for (int i = A.size()-1; i >= 0; i--)
 		{
-			B.at(int(--C.at(((A.at(i) >> k) & 1)))) = A.at(i);
+			B.at(int(--C.at(((A.at(i) >> k) & 1)))) = int(A.at(i));
 		}
 		cout << "Sorting vector B successful!\n";
 
@@ -94,7 +99,11 @@ vector<int> RadixSort(vector<int> A) {
 	}
 
 	cout << "Radix Sort successfully completed!\n\n";
-	return A;
+	//pretvori vector<unsigned char> v vector<int> (za zapis v datoteko)
+	vector<unsigned char> A_copy(A.begin(), A.end());	//vector<int> -> vector<unsigned char>
+	vector<int> Ay(A_copy.begin(), A_copy.end());		//vector<unsigned char> -> vector<int>
+	
+	return Ay;
 }
 
 int main(int argc, char* argv[])
@@ -109,8 +118,7 @@ int main(int argc, char* argv[])
 	else {
 		/*
 		vector<int> A = { 14,5,2,12 };
-		//A = RadixSort(A);
-		A = RadixSort(ReadFromFile(argv[1]));
+		A = RadixSort(A);
 		for (int i = 0; i < A.size(); i++) {
 			cout << A.at(i) << " ";
 		}
