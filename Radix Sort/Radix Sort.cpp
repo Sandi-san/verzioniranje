@@ -1,6 +1,3 @@
-// Radix Sort.cpp : This file contains the 'main' function. Program execution begins and ends there.
-//
-
 #include <iostream>
 #include <vector>
 #include <fstream>
@@ -48,205 +45,57 @@ void SaveToFile(vector<int> B) {
 	cout << "File saved successfully!\n";
 }
 
-/*
-vector<int> CountingSort(vector<int> A) {
-	cout << "Running Counting sort...\n";
-	vector<int> C; //pomozno polje
-
-	cout << "Getting minimum and maximum intervals...\n";
-	//pridobi interval min in max stevila v polju
-	int min = INT_MAX;
-	int max = 0;
-	for (int i = 0; i < A.size(); i++)
-	{
-		if (A.at(i) < min)
-			min = A.at(i);
-		if (A.at(i) > max)
-			max = A.at(i);
-	}
-	cout << "Intervals counted!\n";
-
-	cout << "Removing negative numbers...\n";
-	//odstrani negativna stevila (pristej min vrednost)
-	int neg = min * (-1);
-	for (int i = 0; i < A.size(); i++)
-	{
-		A.at(i) += neg;
-	}
-	cout << "Negative numbers removed!\n";
-
-	cout << "Creating array C...\n";
-	int sizeC = max + 1 + neg; //velikost C je najvecja vrednost A+1 (upostevaj nove vrednosti (neg))
-	//inicializiraj vseh elementov C na 0
-	for (int i = 0; i < sizeC; i++)
-	{
-		C.push_back(0);
-	}
-	cout << "C array successfully created!\n";
-
-	cout << "Counting C array variables...\n";
-	//stej C
-	//za vsako vrednost A[i] povecaj C z C[A[i]]=C[A[i]]+1;
-	for (int i = 0; i < A.size(); i++)
-	{
-		//C.at(A.at(i)) = C.at(i) + 1;
-		C.at(A.at(i))++;
-	}
-	cout << "C array variables counted successfully!\n";
-	//do tukaj tudi Roman sort
-
-	cout << "Counting sum of variables in C array...\n";
-	//sestevaj vrednosti C (inkrementalno, narascajoce)
-	//sestej vrednosti polja C kot C[i]=C[i]+C[i-1] za i>0 (vred v C vecja od 0)
-	for (int i = 0; i < C.size(); i++)
-	{
-		if (C.at(i) > 0)
-		{
-			if (i != 0)
-				C.at(i) += C.at(i - 1);
-		}
-		else
-			C.at(i) = C.at(i - 1);
-	}
-	cout << "Sum of variables in C array successfully counted!\n";
-
-	cout << "Creating B array...\n";
-	//ustvari polje B, velikosti A
-	vector<int> B;
-	for (int i = 0; i < A.size(); i++)
-	{
-		B.push_back(0);
-	}
-	cout << "B array successfully created!\n";
-
-	cout << "Counting variables from B array...\n";
-	//za vsako vrednost A[i] (OBRATNI VRSTNI RED) zapisi izhod v B kot B[C[A[i]]-1]=A[i]
-	//in dekrementiraj C[A[i]]=C[A[i]]-1
-	for (int i = A.size() - 1; i >= 0; i--)
-	{
-		B.at(C.at(A.at(i)) - 1) = A.at(i);
-		C.at(A.at(i))--;
-	}
-	cout << "B array variables successfully counted!\n";
-
-	//od tu dalje vsebuje tudi Roman sort
-	cout << "Converting to previous interval...\n";
-	//pretvori v obratni interval
-	for (int i = 0; i < B.size(); i++)
-	{
-		B.at(i) -= neg;
-	}
-	cout << "B array successfully converted to original interval!\n";
-
-	cout << "Counting Sort successfully completed!\n";
-	return B;
-}
-*/
-
-
-vector<int> CountingSort(vector<int> A, int k) {
-	cout << "Running Counting sort...\n";
-	vector<unsigned int> C; //pomozno polje
-	//C inicializiraj na 2 velikosti (2 bita)
-	C.push_back(0); //C[0]
-	C.push_back(0); //C[1]
-
-	for (int i = 0; i < A.size(); i++)
-	{
-		//bool bit = (A.at(i) >> k & 1);
-		bool bit = A.at(i);
-		//A.at(i) = C.at(bit)++;
-		C.at(bit)++;
-	}
-	C.at(1) += C.at(0); //prefix sum
-
-	//init vector B
-	vector<int> B;
-	for (int i = 0; i < A.size(); i++)
-	{
-		B.push_back(0);
-	}
-	
-	for (int i = A.size() - 1; i >= 0; i--) {
-		//bool bit = (A.at(i) >> k & 1);
-		bool bit = A.at(i);
-
-		B.at(--C.at(bit)) = A.at(i);
-	}
-
-	std::swap(A, B);
-	return A;
-}
-
-vector<int> initVector(vector<int> B, int size) {
-	B.clear();
+vector<int> initVector(vector<int> A, int size) {
+	A.clear();
 	for (int i = 0; i < size; i++) {
-		B.push_back(0);
+		A.push_back(0);
 	}
-	return B;
+	return A;
 }
 
 //vector<unsigned char> RadixSort(vector<int> A) {
 vector<int> RadixSort(vector<int> A) {
+	cout << "\nRunning Radix sort...\n";
 
-	//vector<unsigned char> C; //prefixi
+	cout << "Creating and initializing C vector...\n";
 	vector<unsigned int> C; //prefixi
 	C.push_back(0); C.push_back(0); //inicializiraj
 
 	vector<int> B;
 
 	for (int k = 0; k < 8; k++) {
+		cout << "\nSorting bit "<<k+1<<":\n";
+
 		//nastavi na C[0]=0 in C[1]=0
 		C.at(0) = 0;
 		C.at(1) = 0;
 
+		cout << "Counting 0s and 1s...\n";
 		for (int i = 0; i < A.size(); i++) {
 			//cout << ((A.at(i) >> k) & 1) << "\n";
-			C.at((A.at(i) >> k) & 1)++;
+			int(C.at((A.at(i) >> k) & 1)++);
 		}
+		cout << "0s and 1s successfully counted and saved to C!\n";
 
 		C.at(1) += C.at(0);
+
+		cout << "Initializing vector B...\n";
 		B = initVector(B, A.size());
+
+		cout << "Sorting vector B based on values of C...\n";
 		for (int i = A.size()-1; i >= 0; i--)
 		{
 			B.at(int(--C.at(((A.at(i) >> k) & 1)))) = A.at(i);
 		}
+		cout << "Sorting vector B successful!\n";
+
+		cout << "Saving results of vector B to vector A...\n";
 		std::swap(A, B);
 	}
 
+	cout << "Radix Sort successfully completed!\n\n";
 	return A;
 }
-/*
-//vector<unsigned char> RadixSort(vector<int> A) {
-void RadixSort(vector<int> A) {
-	//iz zgleda
-	for (int k = 0; k < 8; k++) {
-
-		vector<unsigned int>C;
-		C.push_back(0); C.push_back(0);
-		for (int i = 0; i < A.size(); i++) {
-			//cout << ((A.at(i) >> k) & 1) << "\n";
-			bool bit = ((A.at(i) >> k) & 1);
-			D.push_back(bit);
-		}
-
-
-		vector<int> D_copy(D.begin(), D.end());					//vector<unsigned char> pretovori v vector<int>
-		D_copy = CountingSort(D_copy, k);							//sortiraj D
-		vector<unsigned char> D(D_copy.begin(), D_copy.end());	//vector<int> pretvori v vector<unsigned char>
-
-		//Glede na indekse sortiranih bitov popravimo vrstni red števil v A
-		//(tako velja i == j, za A[i] in D[j]).
-		for (int i = 0, j = 0; i < D.size(); i++, j++)
-		{
-			//cout << int(D.at(i)) << "\n";
-			A.at(i) = D.at(j);
-		}
-		//return;
-
-	}
-}
-*/
 
 int main(int argc, char* argv[])
 {
@@ -258,16 +107,16 @@ int main(int argc, char* argv[])
 		cout << "Invalid number of input arguments! Requires at least one!\n";
 	}
 	else {
-		
+		/*
 		vector<int> A = { 14,5,2,12 };
-		A = RadixSort(A);
-		
+		//A = RadixSort(A);
+		A = RadixSort(ReadFromFile(argv[1]));
 		for (int i = 0; i < A.size(); i++) {
 			cout << A.at(i) << " ";
 		}
+		*/
 		
-		
-		//SaveToFile(RadixSort(ReadFromFile(argv[1])));
+		SaveToFile(RadixSort(ReadFromFile(argv[1])));
 	}
 	return 0;
 }
