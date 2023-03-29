@@ -178,107 +178,42 @@ vector<int> CountingSort(vector<int> A, int k) {
 	return A;
 }
 
-//sortiranje arrayev koncano?; A[i]>>k == D[i]
-bool arraySortFinished(vector<int> A, vector<unsigned char> D, int k) {
-	for (int i = 0; i < A.size(); i++) {
-		if (((A.at(i) >> k) & 1) != (int(D.at(i)) == 1))
-			return false;
+vector<int> initVector(vector<int> B, int size) {
+	B.clear();
+	for (int i = 0; i < size; i++) {
+		B.push_back(0);
 	}
-	return true;
+	return B;
 }
 
 //vector<unsigned char> RadixSort(vector<int> A) {
 vector<int> RadixSort(vector<int> A) {
 
-	vector<unsigned char> D; //polje bitov
+	//vector<unsigned char> C; //prefixi
+	vector<unsigned int> C; //prefixi
+	C.push_back(0); C.push_back(0); //inicializiraj
+
+	vector<int> B;
+
 	for (int k = 0; k < 8; k++) {
-		
-		D.clear();
+		//nastavi na C[0]=0 in C[1]=0
+		C.at(0) = 0;
+		C.at(1) = 0;
+
 		for (int i = 0; i < A.size(); i++) {
 			//cout << ((A.at(i) >> k) & 1) << "\n";
-			bool bit = ((A.at(i) >> k) & 1);
-			D.push_back(bit);
+			C.at((A.at(i) >> k) & 1)++;
 		}
 
-		
-		vector<int> D_copy(D.begin(), D.end());					//vector<unsigned char> pretovori v vector<int>
-		D_copy = CountingSort(D_copy,k);						//sortiraj D
-		vector<unsigned char> D(D_copy.begin(), D_copy.end());	//vector<int> pretvori v vector<unsigned char>
-		
-		//Glede na indekse sortiranih bitov popravimo vrstni red števil v A
-		//(tako velja i == j, za A[i] in D[j]).
-
-		if (k == 3) {
-			cout << "debug";
-		}
-
-		bool increment = true;
-		for (int i = 0; i < A.size(); )
+		C.at(1) += C.at(0);
+		B = initVector(B, A.size());
+		for (int i = A.size()-1; i >= 0; i--)
 		{
-			if (((A.at(i) >> k) & 1) == 1) {
-				for (int j = 0; j < D.size(); j++) {
-					if((int(D.at(j)) == 1) && i!=j) {
-						if (A.at(i) != A.at(j)) {
-							int temp = A.at(i);
-							A.erase(A.begin() + i); //remove at i
-							A.push_back(temp);
-							//A.insert(A.begin() + j, temp);	//add at j
-							increment = false;
-							break;
-
-							//PROBLEM: k=3, pri 14
-							//sortira 12, ne pa 14
-						}
-					}
-				}
-			/*
-			else {
-				for (int j = 0; j < D.size(); j++) {
-					if ((int(D.at(j)) == 0) && i!=j) {
-						if (A.at(i) != A.at(j)) {
-							int temp = A.at(i);
-							A.erase(A.begin() + i); //remove at i
-							A.push_back(temp);
-							//A.insert(A.begin() + j, temp);	//add at j
-
-							break;
-						}
-					}
-				}
-				*/
-			}
-			if (arraySortFinished(A, D, k))
-				break;
-			//if (increment) {
-				i++;
-			//}
-			increment = true;
+			B.at(int(--C.at(((A.at(i) >> k) & 1)))) = A.at(i);
 		}
-		
-		/*
-		for (int i = 0; i < A.size(); i++)
-		{
-			if (((A.at(i) >> k) & 1) == 1) {
-				//if (((A.at(i) >> k) & 1) == 1 && ((int(D.at(i)) != 1))) {
-				for (int j = 0; j < D.size(); j++) {
-					if ((int(D.at(j)) == 1) && i != j) {
-						int temp = A.at(i);
-						A.erase(A.begin() + i); //remove at i
-						A.push_back(temp);
-						//A.insert(A.begin() + j, temp);	//add at j
-						
-						//break;
-						//zajebe na k=3, pri 14
-					}
-				}
-				//A.erase(A.begin() + i);
-				//A.insert(A.begin() + j, temp);
-			}
-		}
-		*/
-		//return;
-		
+		std::swap(A, B);
 	}
+
 	return A;
 }
 /*
@@ -323,6 +258,7 @@ int main(int argc, char* argv[])
 		cout << "Invalid number of input arguments! Requires at least one!\n";
 	}
 	else {
+		
 		vector<int> A = { 14,5,2,12 };
 		A = RadixSort(A);
 		
@@ -330,8 +266,8 @@ int main(int argc, char* argv[])
 			cout << A.at(i) << " ";
 		}
 		
-		//RadixSort(ReadFromFile(argv[1]));
-		cout << "OK";
+		
+		//SaveToFile(RadixSort(ReadFromFile(argv[1])));
 	}
 	return 0;
 }
