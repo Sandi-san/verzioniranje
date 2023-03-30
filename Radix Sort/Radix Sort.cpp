@@ -54,10 +54,10 @@ vector<unsigned char> initVector(vector<unsigned char> A, int size) {
 	return A;
 }
 
-//vector<unsigned char> RadixSort(vector<int> A) {
 vector<int> RadixSort(vector<int> Ax) {
+	//Ax = vector iz datoteke (tip int)
 	//pretvori vector<int> v vector<unsigned char>
-	vector<int> Ax_copy(Ax.begin(), Ax.end());				//vector<unsigned char> -> vector<int>
+	vector<int> Ax_copy(Ax.begin(), Ax.end());					//vector<unsigned char> -> vector<int>
 	vector<unsigned char> A(Ax_copy.begin(), Ax_copy.end());	//vector<int> -> vector<unsigned char>
 
 	cout << "\nRunning Radix sort...\n";
@@ -102,7 +102,8 @@ vector<int> RadixSort(vector<int> Ax) {
 	//pretvori vector<unsigned char> v vector<int> (za zapis v datoteko)
 	vector<unsigned char> A_copy(A.begin(), A.end());	//vector<int> -> vector<unsigned char>
 	vector<int> Ay(A_copy.begin(), A_copy.end());		//vector<unsigned char> -> vector<int>
-	
+	//Ay = vector, ki ga shranjujemo v datoteko (tip int)
+
 	return Ay;
 }
 
